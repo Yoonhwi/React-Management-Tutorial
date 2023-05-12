@@ -6,13 +6,21 @@ import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
+import CircularProgress from "@mui/material/CircularProgress";
 import "./App.css";
 
 class App extends Component {
   state = {
     customers: "",
+    completed: 0,
+  };
+  progress = () => {
+    let { completed } = this.state;
+    this.setState({ completed: completed >= 100 ? 0 : completed + 2 });
   };
   componentDidMount() {
+    this.timer = setInterval(this.progress, 200);
+
     this.callApi()
       .then((res) => this.setState({ customers: res }))
       .catch((err) => console.log(err));
@@ -37,21 +45,31 @@ class App extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {this.state.customers
-              ? this.state.customers.map((c) => {
-                  return (
-                    <Customer
-                      key={c.id}
-                      id={c.id}
-                      image={c.image}
-                      name={c.name}
-                      birthday={c.birthday}
-                      gender={c.gender}
-                      job={c.job}
-                    />
-                  );
-                })
-              : ""}
+            {this.state.customers ? (
+              this.state.customers.map((c) => {
+                return (
+                  <Customer
+                    key={c.id}
+                    id={c.id}
+                    image={c.image}
+                    name={c.name}
+                    birthday={c.birthday}
+                    gender={c.gender}
+                    job={c.job}
+                  />
+                );
+              })
+            ) : (
+              <TableRow>
+                <TableCell colSpan="6" align="center">
+                  <CircularProgress
+                    sx={{ marginTop: 2 }}
+                    variant="determinate"
+                    value={this.state.completed}
+                  />
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </Paper>
