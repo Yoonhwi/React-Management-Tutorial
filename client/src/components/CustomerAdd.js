@@ -14,9 +14,18 @@ class CustomerAdd extends React.Component {
     };
   }
   handlerFormsubmit = (e) => {
-    e.preventDeFault();
+    e.preventDefault();
     this.addCustomer().then((response) => {
       console.log(response.data);
+      this.props.stateRefresh();
+    });
+    this.setState({
+      file: null,
+      userName: "",
+      birthday: "",
+      gender: "",
+      job: "",
+      fileName: "",
     });
   };
   handlerFileChange = (e) => {
@@ -32,7 +41,7 @@ class CustomerAdd extends React.Component {
   };
   addCustomer = () => {
     const url = "/api/customers";
-    const formData = new URLSearchParams();
+    const formData = new FormData();
     formData.append("image", this.state.file);
     formData.append("namez", this.state.userName);
     formData.append("birthday", this.state.birthday);
